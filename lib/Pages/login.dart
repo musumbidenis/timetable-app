@@ -8,35 +8,15 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-GlobalKey <FormState> _formKey = GlobalKey();
-
-TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
-
+String admission = "";
 TextEditingController admissionController = TextEditingController();
 TextEditingController idController = TextEditingController();
-
-String admission = "";
 String idNumber = "";
+TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Colors.white,
-    body: Center(
-    child: Container(
-    child: Padding(
-    padding: const EdgeInsets.all(36.0),
-    child: SingleChildScrollView(
-    child: Form(
-      key: _formKey,
-      child: LoginForm(),
-    )
-    ),
-  ),
-),),);
-}
+GlobalKey <FormState> _formKey = GlobalKey();
 
-Widget LoginForm(){
+Widget loginForm(){
   return Column(
   children: <Widget>[
     CircleAvatar(
@@ -51,7 +31,10 @@ Widget LoginForm(){
       validator: (String value){
         if (value.isEmpty) {
           return "Admission number is required";
-        } else {
+        }else if (value.length != 13){
+          return "Admission number should contain 13 characters";
+        }else{
+          return null;
         }
       },
       decoration: InputDecoration(
@@ -59,10 +42,19 @@ Widget LoginForm(){
       hintText: "admission number",
       border:OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     ),
-    SizedBox(height: 25.0),
+    SizedBox(height: 15.0),
     TextFormField(
       obscureText: true,
       style: style,
+      validator: (String value){
+        if (value.isEmpty){
+          return "Id number required";
+        }else if(value.length != 8){
+          return "Id number should contain 8 characters";
+        }else{
+          return null;
+        }
+      },
       keyboardType: TextInputType.number,
       onSaved: (String value){
         idController.text = value;
@@ -72,7 +64,7 @@ Widget LoginForm(){
       hintText: "id number",
       border:OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     ),
-    SizedBox(height: 35.0),
+    SizedBox(height: 25.0),
     Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -81,8 +73,8 @@ Widget LoginForm(){
       minWidth: MediaQuery.of(context).size.width,
       padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
       onPressed: () {
-        _formKey.currentState.validate();
-      },
+          _formKey.currentState.validate();
+      },      
       child: Text("Login",
       textAlign: TextAlign.center,
       style: style.copyWith(
@@ -103,8 +95,29 @@ Widget LoginForm(){
           builder: (context) => Register()));
           },
         ),
-      ],
+      ], 
     ),
   ],);
+}
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.white,
+    appBar: AppBar(
+      backgroundColor: Color(0xff01A0C7),
+    ),
+    body: Center(
+    child: Container(
+    child: Padding(
+    padding: const EdgeInsets.all(36.0),
+    child: SingleChildScrollView(
+    child: Form(
+      key: _formKey,
+      child: loginForm(),
+    )
+    ),
+  ),
+),),);
 }
 }
