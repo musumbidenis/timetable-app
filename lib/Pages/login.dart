@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:timetable/Pages/home.dart';
 import 'package:timetable/Pages/register.dart';
 
 class Login extends StatefulWidget {
@@ -92,7 +93,7 @@ Widget loginForm(){
           child: Text("Register", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xff01A0C7),),),
           onTap: () {
         Navigator.push(context, MaterialPageRoute(
-          builder: (context) => Register()));
+          builder: (context) => Home()));
           },
         ),
       ], 
@@ -105,19 +106,23 @@ Widget build(BuildContext context) {
   return Scaffold(
     backgroundColor: Colors.white,
     appBar: AppBar(
+      title: Center(
+        child: Text("LOGIN")),
       backgroundColor: Color(0xff01A0C7),
     ),
     body: Center(
-    child: Container(
-    child: Padding(
-    padding: const EdgeInsets.all(36.0),
-    child: SingleChildScrollView(
-    child: Form(
-      key: _formKey,
-      child: loginForm(),
-    )
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(36, 0, 36, 0),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: loginForm(),
+            )
+          ),
+        ),
+      ),
     ),
-  ),
-),),);
+  );
 }
 }
