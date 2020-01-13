@@ -1,6 +1,8 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:timetable/Pages/home.dart';
+import 'package:timetable/APIs/api.dart';
 import 'package:timetable/Pages/register.dart';
 
 class Login extends StatefulWidget {
@@ -9,10 +11,10 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-String admission = "";
+
 TextEditingController admissionController = TextEditingController();
 TextEditingController idController = TextEditingController();
-String idNumber = "";
+
 TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
 
 GlobalKey <FormState> _formKey = GlobalKey();
@@ -26,6 +28,7 @@ Widget loginForm(){
     ),
     SizedBox(height: 25.0),
     TextFormField(
+      controller: admissionController,
       obscureText: false,
       style: style,
       keyboardType: TextInputType.text,
@@ -45,6 +48,7 @@ Widget loginForm(){
     ),
     SizedBox(height: 15.0),
     TextFormField(
+      controller: idController,
       obscureText: true,
       style: style,
       validator: (String value){
@@ -57,9 +61,6 @@ Widget loginForm(){
         }
       },
       keyboardType: TextInputType.number,
-      onSaved: (String value){
-        idController.text = value;
-      },
       decoration: InputDecoration(
       contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
       hintText: "id number",
@@ -73,9 +74,7 @@ Widget loginForm(){
       child: MaterialButton(
       minWidth: MediaQuery.of(context).size.width,
       padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-      onPressed: () {
-          _formKey.currentState.validate();
-      },      
+      onPressed: _handleLogin,     
       child: Text("Login",
       textAlign: TextAlign.center,
       style: style.copyWith(
@@ -93,7 +92,7 @@ Widget loginForm(){
           child: Text("Register", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xff01A0C7),),),
           onTap: () {
         Navigator.push(context, MaterialPageRoute(
-          builder: (context) => Home()));
+          builder: (context) => Register()));
           },
         ),
       ], 
@@ -105,11 +104,6 @@ Widget loginForm(){
 Widget build(BuildContext context) {
   return Scaffold(
     backgroundColor: Colors.white,
-    appBar: AppBar(
-      title: Center(
-        child: Text("LOGIN")),
-      backgroundColor: Color(0xff01A0C7),
-    ),
     body: Center(
       child: Container(
         child: Padding(
@@ -124,5 +118,21 @@ Widget build(BuildContext context) {
       ),
     ),
   );
+}
+
+void _handleLogin() async{
+  var form = _formKey.currentState;
+  if (form.validate()){
+    form.save();
+  
+  var data = {
+    'admission': admissionController.text,
+    'idNumber': idController.text,
+  };
+
+  var response = await CallAPi().postData(data,'login');
+  var body = json.decode(response.body);
+  print(body);
+  }
 }
 }

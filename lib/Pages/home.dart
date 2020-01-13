@@ -13,8 +13,6 @@ class Home extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: <Widget>[
-                              
-                
                 ],                
               ),
             ),

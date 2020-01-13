@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:timetable/APIs/api.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -16,27 +18,14 @@ TextEditingController emailController = TextEditingController();
 TextEditingController idController = TextEditingController();
 TextEditingController phoneController = TextEditingController();
 TextEditingController courseController = TextEditingController();
-TextEditingController yosController = TextEditingController();
-
-String admission = "";
-String name = "";
-String email = "";
-String idNumber = "";
-String phone = "";
-String course = "";
-String yos = "";
+TextEditingController yearController = TextEditingController();
 
   @override
 Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Center(
-          child: Text("REGISTER")),
-        backgroundColor: Color(0xff01A0C7),
-      ),
       body: Center(
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.all(36.0),
           child: SingleChildScrollView(
             child: Form(
@@ -48,6 +37,8 @@ Widget build(BuildContext context) {
       ),
     );
   }
+
+
 Widget registerForm(){
   return Column(
     children: <Widget>[
@@ -57,6 +48,7 @@ Widget registerForm(){
       ),
       SizedBox(height: 25.0),
       TextFormField(
+        controller: admissionController,
         obscureText: false,
         style: style,
         keyboardType: TextInputType.text,
@@ -76,6 +68,7 @@ Widget registerForm(){
         ),
       SizedBox(height: 15.0),
       TextFormField(
+        controller: nameController,
         obscureText: false,
         style: style,
         keyboardType: TextInputType.text,
@@ -93,6 +86,7 @@ Widget registerForm(){
         ),
       SizedBox(height: 15.0),
       TextFormField(
+        controller: emailController,
         obscureText: false,
         style: style,
         keyboardType: TextInputType.emailAddress,
@@ -110,6 +104,7 @@ Widget registerForm(){
         ),
       SizedBox(height: 15.0),
       TextFormField(
+        controller: phoneController,
         obscureText: false,
         style: style,
         keyboardType: TextInputType.number,
@@ -127,6 +122,7 @@ Widget registerForm(){
         ),
       SizedBox(height: 15.0),
       TextFormField(
+        controller: idController,
         obscureText: false,
         style: style,
         keyboardType: TextInputType.number,
@@ -144,6 +140,7 @@ Widget registerForm(){
         ),
       SizedBox(height: 15.0),
       TextFormField(
+        controller: courseController,
         obscureText: false,
         style: style,
         keyboardType: TextInputType.text,
@@ -161,9 +158,10 @@ Widget registerForm(){
         ),
       SizedBox(height: 15.0),
       TextFormField(
+        controller: yearController,
         obscureText: false,
         style: style,
-        keyboardType: TextInputType.text,
+        keyboardType: TextInputType.number,
         validator: (String value){
           if (value.isEmpty) {
             return "year of study is required";
@@ -184,9 +182,7 @@ Widget registerForm(){
         child: MaterialButton(
           minWidth: MediaQuery.of(context).size.width,
           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          onPressed: () {
-            _formKey.currentState.validate();
-          },      
+          onPressed: _handleRegister,      
           child: Text("Register",
             textAlign: TextAlign.center,
             style: style.copyWith(
@@ -211,4 +207,26 @@ Widget registerForm(){
     ],
    );
   }
+
+
+void _handleRegister() async{
+  var form = _formKey.currentState;
+  if (form.validate()){
+    form.save();
+  
+  var data = {
+    'admission': admissionController.text,
+    'name': nameController.text,
+    'email': emailController.text,
+    'idNumber': idController.text,
+    'phone': phoneController.text,
+    'course': courseController.text,
+    'year': yearController.text,
+  };
+
+  var response = await CallAPi().postData(data,'register');
+  var body = json.decode(response.body);
+  print(body);
+  }
+}
 }
