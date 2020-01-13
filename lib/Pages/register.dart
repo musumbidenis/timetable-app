@@ -8,6 +8,11 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+String _mySelection;
+List data = List();
+
+bool _isLoading = false;
+
 GlobalKey <FormState> _formKey = GlobalKey();
 
 TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
@@ -19,6 +24,12 @@ TextEditingController idController = TextEditingController();
 TextEditingController phoneController = TextEditingController();
 TextEditingController courseController = TextEditingController();
 TextEditingController yearController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    this.getCourses();
+  }
 
   @override
 Widget build(BuildContext context) {
@@ -139,23 +150,29 @@ Widget registerForm(){
         border:OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
         ),
       SizedBox(height: 15.0),
-      TextFormField(
-        controller: courseController,
-        obscureText: false,
-        style: style,
-        keyboardType: TextInputType.text,
-        validator: (String value){
-          if (value.isEmpty) {
-            return "course studying is required";
-          }else{
-            return null;
-          }
+      SingleChildScrollView(child:
+      DropdownButton(
+        icon: Icon(Icons.arrow_drop_down),
+        iconSize: 10,
+        underline: Container(
+              height: 2,
+              color: Colors.deepPurpleAccent,
+            ),
+        items: data.map((item){
+          return DropdownMenuItem(
+            child: Text(item['courseTitle']),
+            value: item['courseCode'].toString(),
+          );
+        }).toList(),
+        onChanged: (newVal){
+          setState(() {
+            _mySelection = newVal;
+          });
         },
-        decoration: InputDecoration(
-        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        hintText: "course",
-        border:OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-        ),
+        value: _mySelection,
+      ),),
+      SizedBox(height: 15.0),
+
       SizedBox(height: 15.0),
       TextFormField(
         controller: yearController,
@@ -183,7 +200,7 @@ Widget registerForm(){
           minWidth: MediaQuery.of(context).size.width,
           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           onPressed: _handleRegister,      
-          child: Text("Register",
+          child: Text( _isLoading ? 'Registering ...': "Register",
             textAlign: TextAlign.center,
             style: style.copyWith(
             color: Colors.white, fontWeight: FontWeight.bold)),
@@ -208,7 +225,14 @@ Widget registerForm(){
    );
   }
 
+void getCourses() async{
+var response = await CallAPi().getData('getCourses');
+var body = json.decode(response.body);
+setState(() {
+  data = body;
+});
 
+}
 void _handleRegister() async{
   var form = _formKey.currentState;
   if (form.validate()){
@@ -220,10 +244,12 @@ void _handleRegister() async{
     'email': emailController.text,
     'idNumber': idController.text,
     'phone': phoneController.text,
-    'course': courseController.text,
+    'course': _mySelection,
     'year': yearController.text,
   };
-
+  setState(() {
+    _isLoading = true;
+  });
   var response = await CallAPi().postData(data,'register');
   var body = json.decode(response.body);
   print(body);
