@@ -180,7 +180,7 @@ Widget registerForm(){
       SizedBox(height: 15.0),
 
       /////Courses dropdown/////
-      Container(
+       Container(
         padding: EdgeInsets.only(left: 20.0, right: 20.0),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32.0),
