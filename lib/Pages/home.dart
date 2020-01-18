@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timetable/Sessions/mondaySession.dart';
+import 'package:timetable/Sessions/tuesdaySession.dart';
 import 'package:timetable/background.dart';
 
 
@@ -23,19 +24,54 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Color(0xff01A0C7),
-        bottom: getTabBar(),
-        ),
       body: Stack(
         children: <Widget>[
+          //Background//
           Background(screenHeight: MediaQuery.of(context).size.height,),
-          getTabBarPages()
-        ],),
+
+          //Headings for the hompage//
+          Padding(
+            padding: const EdgeInsets.only(top: 50.0,left: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text("Timetable",style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold, color: Color(0x99FFFFFF)),),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 18.0),
+                        child: Icon(Icons.search, size: 30, color: Colors.white,),
+                      ),
+                    ],
+                  ),
+                  Text("Sessions", style: TextStyle(fontSize: 40.0,fontWeight: FontWeight.bold, color: Color(0XFFFFFFFF)),),
+                ],
+            ),
+          ),
+
+          //TabBar appears here//
+          Padding(
+            padding: const EdgeInsets.only(top: 150.0),
+            child: Container(
+              height: 75,
+              child: getTabBar()
+            ),
+          ),
+
+          //TabBar pages appear here//
+          Padding(
+            padding: const EdgeInsets.only(top: 210.0),
+            child: Container(
+              child: getTabBarPages(),
+            ),
+          ),
+        ],), 
     );
   }
 
+
+////////////TabBar widget/////////////
  Widget getTabBar() {
   return TabBar(
     isScrollable: true,
@@ -44,86 +80,79 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
     labelStyle: style,
     indicatorSize: TabBarIndicatorSize.label,
     indicator: BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(18)),
-      color: Colors.redAccent,
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+      color: Color(0xffe6020a),
     ),
+
+    /////Tabs for the days/////
     tabs: [
+    //Monday//
+      Container(
+        width: 150,
+        child: Tab(
+          child: Align(
+            alignment: Alignment.center,
+            child: Text("Monday", style: TextStyle(fontSize: 24),),
+          ),
+        ),
+      ),
+
+      //Tuesday//
       Tab(
         child: Container(
           width: 150,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.transparent, width: 3),
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
         child: Align(
           alignment: Alignment.center,
-          child: Text("Monday"),
+          child: Text("Tuesday", style: TextStyle(fontSize: 24),),
         ),
        ),
       ),
+
+      //Wednesday//
       Tab(
         child: Container(
           width: 150,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.transparent, width: 3),
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
         child: Align(
           alignment: Alignment.center,
-          child: Text("Tuesday"),
+          child: Text("Wednesday", style: TextStyle(fontSize: 24),),
         ),
        ),
       ),
+
+      //Thursday//
       Tab(
         child: Container(
           width: 150,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.transparent, width: 3),
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
         child: Align(
           alignment: Alignment.center,
-          child: Text("Wednesday"),
+          child: Text("Thursday", style: TextStyle(fontSize: 24),),
         ),
        ),
       ),
+
+      //Friday//
       Tab(
         child: Container(
           width: 150,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.transparent, width: 3),
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
         child: Align(
           alignment: Alignment.center,
-          child: Text("Thursday"),
-        ),
-       ),
-      ),
-      Tab(
-        child: Container(
-          width: 150,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.transparent, width: 3),
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text("Friday"),
+          child: Text("Friday", style: TextStyle(fontSize: 24),),
         ),
        ),
       ),
     ]);
   }
 
+
+/////////////Pages to display for each tab///////////////
 Widget getTabBarPages() {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 70.0),
+    padding: const EdgeInsets.only(top: 40),
     child: TabBarView(
       controller: tabController,
       children: <Widget>[
         SessionMonday(),
-        Container(color: Colors.green),
+        SessionTuesday(),
         Container(color: Colors.black),
         Container(color: Colors.orange),
         Container(color: Colors.yellow),

@@ -320,10 +320,10 @@ void _handleRegister() async{
   //Post user data to db via API//
   var response = await CallAPi().postData(data,'register');
   var body = json.decode(response.body);
-  print(body);
-  }
-
+  if(body['success'] != null){
   //Return to login page
   Navigator.pop(context);
+  }
+  }
  }
 }

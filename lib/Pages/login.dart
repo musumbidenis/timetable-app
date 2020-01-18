@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timetable/APIs/api.dart';
 import 'package:timetable/Pages/home.dart';
 import 'package:timetable/Pages/register.dart';
+
 
 class Login extends StatefulWidget {
   @override
@@ -10,6 +12,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+String admissionKey = "key";
 
 GlobalKey <FormState> _formKey = GlobalKey();
 
@@ -157,11 +161,17 @@ void _handleLogin() async{
   //Check if the details are correct via API//
   var response = await CallAPi().postData(data,'login');
   var body = json.decode(response.body);
- 
-  if(body['Success'] != null){
-     print(body);
+  print(body);
+  if(body['success'] != null){
+    //Save student info in the variable//
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    await localStorage.setString('admissionKey', admissionController.text);    
+
+    //Navigate to the homepage//
     Navigator.push(context, MaterialPageRoute(
-      builder: (context) => Home()));
+      builder: (context) => Home()
+      ),);
+
   }else{
     return print("error");
   }

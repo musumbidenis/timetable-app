@@ -1,95 +1,60 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timetable/APIs/api.dart';
 
-class MondaySession{
+class TuesdaySession{
   
   final String unitCode;
   final String unitTitle;
   final String sessionStart;
   final String sessionStop;
 
-  MondaySession(this.unitCode, this.unitTitle, this.sessionStart, this.sessionStop);
+  TuesdaySession(this.unitCode, this.unitTitle, this.sessionStart, this.sessionStop);
 
 }
 
 
-class SessionMonday extends StatefulWidget {
+class SessionTuesday extends StatefulWidget {
   @override
-  _SessionMondayState createState() => _SessionMondayState();
+  _SessionTuesdayState createState() => _SessionTuesdayState();
 }
 
-class _SessionMondayState extends State<SessionMonday> {
-
-  //Variables used to retreive sessions for the particular student//
-  int year;
-  String course;
-  String admission;
-  
-  
-  @override
-  void initState() {
-    super.initState();
-    getStudentInfo();
-  }
-
-
+class _SessionTuesdayState extends State<SessionTuesday> {
 
   /////Fetch the sessions that occur on monday/////
-  Future<List<MondaySession>> getMondaySessions() async{
-      var data = {
-      'admission': admission,
-    };
-    var response = await CallAPi().postData(data, 'mondaySessions');
+  Future<List<TuesdaySession>> getTuesdaySessions() async{
+    var response = await CallAPi().getData('tuesdaySessions');
     var jsonData = json.decode(response.body);
-    print(data);
-    print(jsonData);
+
   //Create a list array to store the fetched data//
-  List<MondaySession> sessions = [];
+  List<TuesdaySession> sessions = [];
 
   //Loop through the jsonData and add the items to the list array created//
   for(var s in jsonData){
-    MondaySession mondaySession = MondaySession(
+    TuesdaySession tuesdaySession = TuesdaySession(
       s["unitCode"],s["unitTitle"],s["sessionStart"],s["sessionStop"],);
 
-      sessions.add(mondaySession);
+      sessions.add(tuesdaySession);
   }
 
   //Show the sessions//
   return sessions;
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder(
-        future: getMondaySessions(),
+        future: getTuesdaySessions(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.active:
-              return Center(
-              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
-            );
-              break;
-            case ConnectionState.waiting:
-              return Center(
-              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
-            );
-            case ConnectionState.none:
-              return Center(
-              child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
-            );
-            case ConnectionState.done:
-
           //Check whether data has been fetched//
-          if(snapshot.hasError){
+          if(snapshot.data == null){
             return Center(
-              child: Text(snapshot.error.toString()),
+              child: Text("Loading..."),
             );
-          }else if(snapshot.hasData){
+          }else{
+          
           //Display the sessions fetched in UI//
           return ListView.builder(
             itemCount: snapshot.data.length,
@@ -128,14 +93,8 @@ class _SessionMondayState extends State<SessionMonday> {
               );
             }
           );}
-        } return Container();}
+        }
       )
     );
-  }
-
-    //Fetch student information from localstorage//
-  Future<String> getStudentInfo() async{
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    return admission = localStorage.getString('admissionKey');
   }
 }

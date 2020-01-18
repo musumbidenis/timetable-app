@@ -5,6 +5,7 @@ class CallAPi{
   final String _url = 'http://10.0.2.2:8000/api/';
 
 
+  /////Posting data to db//////
   postData(data, apiUrl) async{
     var fullUrl = _url + apiUrl;
     return await http.post(
@@ -13,6 +14,8 @@ class CallAPi{
       headers: _setHeaders()
     );
   }
+
+  /////Fetching data from db/////
   getData(apiUrl) async{
     var fullUrl = _url + apiUrl;
     return await http.get(
