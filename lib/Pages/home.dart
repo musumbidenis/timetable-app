@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:timetable/Sessions/fridaySession.dart';
 import 'package:timetable/Sessions/mondaySession.dart';
+import 'package:timetable/Sessions/thursdaySession.dart';
 import 'package:timetable/Sessions/tuesdaySession.dart';
+import 'package:timetable/Sessions/wednesdaySession.dart';
 import 'package:timetable/background.dart';
 
 
@@ -14,8 +17,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    super.initState();
     tabController = TabController(length: 5, vsync: this);
+    super.initState();
+    getTabBarPages();
+  }
+
+  @override
+  void dispose(){
+    tabController.dispose();
+    super.dispose();
   }
 
 ///Styling for texts///
@@ -87,12 +97,12 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
     /////Tabs for the days/////
     tabs: [
     //Monday//
-      Container(
-        width: 150,
-        child: Tab(
+      Tab(
+        child: Container(
+          width: 150,
           child: Align(
-            alignment: Alignment.center,
-            child: Text("Monday", style: TextStyle(fontSize: 24),),
+           alignment: Alignment.center,
+              child: Text("Monday", style: TextStyle(fontSize: 24),),
           ),
         ),
       ),
@@ -153,9 +163,9 @@ Widget getTabBarPages() {
       children: <Widget>[
         SessionMonday(),
         SessionTuesday(),
-        Container(color: Colors.black),
-        Container(color: Colors.orange),
-        Container(color: Colors.yellow),
+        SessionWednesday(),
+        SessionThursday(),
+        SessionFriday(),
       ]),
   );
  }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timetable/APIs/api.dart';
 
 class TuesdaySession{
@@ -22,11 +23,24 @@ class SessionTuesday extends StatefulWidget {
 
 class _SessionTuesdayState extends State<SessionTuesday> {
 
-  /////Fetch the sessions that occur on monday/////
-  Future<List<TuesdaySession>> getTuesdaySessions() async{
-    var response = await CallAPi().getData('tuesdaySessions');
-    var jsonData = json.decode(response.body);
+  //Variable used to retreive sessions for the particular student//
+  String admission;
+  
+  
+  @override
+  void initState() {
+    super.initState();
+    SessionTuesday();
+  }
 
+
+  /////Fetch the sessions that occur on tuesday/////
+  Future<List<TuesdaySession>> gettuesdaySessions() async{
+      var data = {
+      'admission': admission,
+    };
+    var response = await CallAPi().postData(data, 'tuesdaySessions');
+    var jsonData = json.decode(response.body);
   //Create a list array to store the fetched data//
   List<TuesdaySession> sessions = [];
 
@@ -40,21 +54,37 @@ class _SessionTuesdayState extends State<SessionTuesday> {
 
   //Show the sessions//
   return sessions;
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: FutureBuilder(
-        future: getTuesdaySessions(),
+        future: gettuesdaySessions(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          //Check whether data has been fetched//
-          if(snapshot.data == null){
-            return Center(
-              child: Text("Loading..."),
+          switch (snapshot.connectionState) {
+            case ConnectionState.active:
+              return Center(
+              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
             );
-          }else{
-          
+              break;
+            case ConnectionState.waiting:
+              return Center(
+              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
+            );
+            case ConnectionState.none:
+              return Center(
+              child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
+            );
+            case ConnectionState.done:
+
+          //Check whether data has been fetched//
+          if(snapshot.hasError){
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }else if(snapshot.hasData){
           //Display the sessions fetched in UI//
           return ListView.builder(
             itemCount: snapshot.data.length,
@@ -93,8 +123,14 @@ class _SessionTuesdayState extends State<SessionTuesday> {
               );
             }
           );}
-        }
+        } return Container();}
       )
     );
+  }
+
+    //Fetch student information from localstorage//
+  Future<String> getAdmission() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    return admission = localStorage.getString('admissionKey');
   }
 }
