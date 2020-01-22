@@ -23,13 +23,14 @@ class SessionMonday extends StatefulWidget {
 
 class _SessionMondayState extends State<SessionMonday> {
 
-  //Variable used to retreive sessions for the particular student//
-  String admission;
+  //Variables used to retreive sessions for the particular student//
+  String course;
+  int year;
   
   
   @override
   void initState() {
-    this.getAdmission();
+    this.getMondaySessions();
     super.initState();
   }
 
@@ -37,11 +38,16 @@ class _SessionMondayState extends State<SessionMonday> {
 
   /////Fetch the sessions that occur on monday/////
   Future<List<MondaySession>> getMondaySessions() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    course = localStorage.getString('courseKey');
+    year= localStorage.getInt('yearKey');
       var data = {
-      'admission': admission,
-    };
+        'course': course,
+        'year': year,      
+      };
     var response = await CallAPi().postData(data, 'mondaySessions');
     var jsonData = json.decode(response.body);
+    print(jsonData);
   //Create a list array to store the fetched data//
   List<MondaySession> sessions = [];
 
@@ -83,7 +89,7 @@ class _SessionMondayState extends State<SessionMonday> {
           //Check whether data has been fetched//
           if(snapshot.hasError){
             return Center(
-              child: Text(snapshot.error.toString()),
+              child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
             );
           }else if(snapshot.hasData){
           //Display the sessions fetched in UI//
@@ -127,11 +133,5 @@ class _SessionMondayState extends State<SessionMonday> {
         } return Container();}
       )
     );
-  }
-
-    //Fetch student information from localstorage//
-  Future<String> getAdmission() async{
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    return admission = localStorage.getString('admissionKey');
   }
 }

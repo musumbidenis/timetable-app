@@ -23,23 +23,28 @@ class SessionWednesday extends StatefulWidget {
 
 class _SessionWednesdayState extends State<SessionWednesday> {
 
-  //Variable used to retreive sessions for the particular student//
-  String admission;
+  //Variables used to retreive sessions for the particular student//
+  String course;
+  int year;
   
   
   @override
   void initState() {
+    this.getWednesdaySessions();
     super.initState();
-    getAdmission();
   }
 
 
 
   /////Fetch the sessions that occur on Wednesday/////
   Future<List<WednesdaySession>> getWednesdaySessions() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    course = localStorage.getString('courseKey');
+    year= localStorage.getInt('yearKey');
       var data = {
-      'admission': admission,
-    };
+        'course': course,
+        'year': year,      
+      };
     var response = await CallAPi().postData(data, 'wednesdaySessions');
     var jsonData = json.decode(response.body);
   //Create a list array to store the fetched data//
@@ -127,11 +132,5 @@ class _SessionWednesdayState extends State<SessionWednesday> {
         } return Container();}
       )
     );
-  }
-
-    //Fetch student information from localstorage//
-  Future<String> getAdmission() async{
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    return admission = localStorage.getString('admissionKey');
   }
 }
