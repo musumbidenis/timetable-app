@@ -114,9 +114,6 @@ Widget coursesDropdown(){
 
 //////Handles the pressed action of next button//////
 void _handleNext() async{
-  if(_course == null){
-    _showMsg(context);
-  }else{
   //Move to the next page//
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => Year()
@@ -126,16 +123,4 @@ void _handleNext() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     localStorage.setString('courseKey', _course);
   }
-}
-
-
-/////Messages////
-void _showMsg(BuildContext context) {
-  final scaffold = Scaffold.of(context);
-  scaffold.showSnackBar(
-    SnackBar(
-      content: const Text('Updating..'),
-    ),
-  );
- }
 }

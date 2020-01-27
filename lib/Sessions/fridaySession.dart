@@ -72,16 +72,16 @@ class _SessionFridayState extends State<SessionFriday> {
           switch (snapshot.connectionState) {
             case ConnectionState.active:
               return Center(
-              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
+              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
             );
               break;
             case ConnectionState.waiting:
               return Center(
-              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
+              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
             );
             case ConnectionState.none:
               return Center(
-              child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 26, fontWeight: FontWeight.bold),),
+              child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
             );
             case ConnectionState.done:
 
@@ -115,11 +115,11 @@ class _SessionFridayState extends State<SessionFriday> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            Text(snapshot.data[index].sessionStart, style: TextStyle(color: Colors.black54,fontSize: 17,fontWeight: FontWeight.bold),),
+                            Text(snapshot.data[index].sessionStart, style: TextStyle(color: Colors.black54,fontSize: 15,fontWeight: FontWeight.bold),),
                             SizedBox(width: 20,),
-                            Text("---", style: TextStyle(color: Colors.black54,fontSize: 17,fontWeight: FontWeight.bold),),
+                            Text("--", style: TextStyle(color: Colors.black54,fontSize: 15,fontWeight: FontWeight.bold),),
                             SizedBox(width: 20,),
-                            Text(snapshot.data[index].sessionStop, style: TextStyle(color: Colors.black54,fontSize: 17,fontWeight: FontWeight.bold),),
+                            Text(snapshot.data[index].sessionStop, style: TextStyle(color: Colors.black54,fontSize: 15,fontWeight: FontWeight.bold),),
                           ],
                         )
                       ],

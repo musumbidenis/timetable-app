@@ -41,7 +41,7 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
 
           //Headings for the hompage//
           Padding(
-            padding: const EdgeInsets.only(top: 50.0,left: 20),
+            padding: const EdgeInsets.only(top: 60.0,left: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -51,11 +51,15 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
                       Text("Timetable",style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold, color: Color(0x99FFFFFF)),),
                       Padding(
                         padding: const EdgeInsets.only(right: 18.0),
-                        child: Icon(Icons.search, size: 30, color: Colors.white,),
+                        child: InkWell(
+                          child: Icon(Icons.exit_to_app, size: 30, color: Colors.white,),
+                          onTap: (){
+                          },  
+                        ),
                       ),
                     ],
                   ),
-                  Text("Sessions", style: TextStyle(fontSize: 40.0,fontWeight: FontWeight.bold, color: Color(0XFFFFFFFF)),),
+                  Text("Sessions", style: TextStyle(fontSize: 35.0,fontWeight: FontWeight.bold, color: Color(0XFFFFFFFF)),),
                 ],
             ),
           ),
@@ -99,10 +103,10 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
     //Monday//
       Tab(
         child: Container(
-          width: 150,
+          width: 120,
           child: Align(
            alignment: Alignment.center,
-              child: Text("Monday", style: TextStyle(fontSize: 24),),
+              child: Text("Monday", style: TextStyle(fontSize: 20),),
           ),
         ),
       ),
@@ -110,10 +114,10 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
       //Tuesday//
       Tab(
         child: Container(
-          width: 150,
+          width: 120,
         child: Align(
           alignment: Alignment.center,
-          child: Text("Tuesday", style: TextStyle(fontSize: 24),),
+          child: Text("Tuesday", style: TextStyle(fontSize: 20),),
         ),
        ),
       ),
@@ -121,10 +125,10 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
       //Wednesday//
       Tab(
         child: Container(
-          width: 150,
+          width: 130,
         child: Align(
           alignment: Alignment.center,
-          child: Text("Wednesday", style: TextStyle(fontSize: 24),),
+          child: Text("Wednesday", style: TextStyle(fontSize: 20),),
         ),
        ),
       ),
@@ -132,10 +136,10 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
       //Thursday//
       Tab(
         child: Container(
-          width: 150,
+          width: 120,
         child: Align(
           alignment: Alignment.center,
-          child: Text("Thursday", style: TextStyle(fontSize: 24),),
+          child: Text("Thursday", style: TextStyle(fontSize: 20),),
         ),
        ),
       ),
@@ -143,10 +147,10 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
       //Friday//
       Tab(
         child: Container(
-          width: 150,
+          width: 120,
         child: Align(
           alignment: Alignment.center,
-          child: Text("Friday", style: TextStyle(fontSize: 24),),
+          child: Text("Friday", style: TextStyle(fontSize: 20),),
         ),
        ),
       ),

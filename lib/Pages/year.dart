@@ -32,7 +32,7 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
         child: Padding(
           padding: const EdgeInsets.only(top:120,left: 15,right: 15),
           child: SingleChildScrollView(
-            child: coursesDropdown(),
+            child: yearsDropdown(),
           ),
         ),
       ),
@@ -50,7 +50,7 @@ void getYears() async{
 }
 
 ////////////Dropdown button for choosing courses/////////////
-Widget coursesDropdown(){
+Widget yearsDropdown(){
  return Container(
     padding: EdgeInsets.only(left: 20.0, right: 20.0),
     child: Column(
