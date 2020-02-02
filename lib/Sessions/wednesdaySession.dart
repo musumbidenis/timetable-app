@@ -34,7 +34,8 @@ class _SessionWednesdayState extends State<SessionWednesday> {
     super.initState();
   }
 
-
+///Styling for texts///
+TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight: FontWeight.bold);
 
   /////Fetch the sessions that occur on Wednesday/////
   Future<List<WednesdaySession>> getWednesdaySessions() async{
@@ -71,24 +72,31 @@ class _SessionWednesdayState extends State<SessionWednesday> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.active:
-              return Center(
-              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
-            );
-              break;
             case ConnectionState.waiting:
-              return Center(
-              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
-            );
+              return Container(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      SizedBox(height: 10.0,),
+                      Text("Loading sessions",style: style,)
+                    ],
+                  ),
+                ),
+              );
+              break;
             case ConnectionState.none:
               return Center(
               child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
             );
+              break;
             case ConnectionState.done:
 
           //Check whether data has been fetched//
           if(snapshot.hasError){
             return Center(
-              child: Text(snapshot.error.toString()),
+              child: Text("Some problem occured, try again"),
             );
           }else if(snapshot.hasData){
           //Display the sessions fetched in UI//

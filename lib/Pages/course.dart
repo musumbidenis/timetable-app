@@ -12,6 +12,7 @@ class Course extends StatefulWidget {
 class _CourseState extends State<Course> {
 
   String _course;
+  String _error;
   
   List courses = List();
 
@@ -84,9 +85,13 @@ Widget coursesDropdown(){
           onChanged: (newVal){
             setState(() {
               _course = newVal;
+              _error = null;
             });
           },
           value: _course,
+        ),
+        _error == null ? SizedBox.shrink() : Text(_error ?? "", 
+        style: style.copyWith(color: Colors.red, fontSize: 18),
         ),
         SizedBox(height: 25.0,),
 
@@ -114,6 +119,10 @@ Widget coursesDropdown(){
 
 //////Handles the pressed action of next button//////
 void _handleNext() async{
+  if(_course == null){
+    setState(() => _error = 'Please select an option to proceed!'
+    );
+  }else{
   //Move to the next page//
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => Year()
@@ -122,5 +131,5 @@ void _handleNext() async{
   //Save student's course in the localStorage//
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     localStorage.setString('courseKey', _course);
-  }
+  }}
 }

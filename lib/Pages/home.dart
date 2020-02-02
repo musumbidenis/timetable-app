@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timetable/Pages/course.dart';
 import 'package:timetable/Sessions/fridaySession.dart';
 import 'package:timetable/Sessions/mondaySession.dart';
 import 'package:timetable/Sessions/thursdaySession.dart';
@@ -53,7 +55,16 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
                         padding: const EdgeInsets.only(right: 18.0),
                         child: InkWell(
                           child: Icon(Icons.exit_to_app, size: 30, color: Colors.white,),
-                          onTap: (){
+                          onTap: () async {
+                            //Remove the user details stored in localStorage then ...//
+                            SharedPreferences localStorage = await SharedPreferences.getInstance();
+                            localStorage.remove('courseKey');
+                            localStorage.remove('yearKey');
+
+                            //SignOut user ... redirect to the first page(course)//
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => Course(),
+                            ),);
                           },  
                         ),
                       ),
@@ -83,7 +94,25 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
         ],), 
     );
   }
-
+  Future onWillPop() async {
+    return (await showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit an App'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('No'),
+          ),
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('Yes'),
+          ),
+        ],
+      ),
+    )) ?? false;
+  }
 
 ////////////TabBar widget/////////////
  Widget getTabBar() {

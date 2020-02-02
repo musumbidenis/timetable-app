@@ -12,6 +12,7 @@ class Year extends StatefulWidget {
 class _YearState extends State<Year> {
 
   int _year;
+  String _error;
 
   List years = List();
 
@@ -85,9 +86,13 @@ Widget yearsDropdown(){
           onChanged: (newVal){
             setState(() {
               _year = newVal;
+              _error = null;
             });
           },
           value: _year,
+        ),
+        _error == null ? SizedBox.shrink() : Text(_error ?? "", 
+        style: style.copyWith(color: Colors.red, fontSize: 18),
         ),
         SizedBox(height: 25.0,),
 
@@ -113,6 +118,10 @@ Widget yearsDropdown(){
   );
 }
 void _handleProceed() async{
+  if(_year == null){
+    setState(() => _error = 'Please select an option to proceed!'
+    );
+  }else{
   //Move to the next page//
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => Home(),
@@ -121,6 +130,7 @@ void _handleProceed() async{
   //Save student's course in the localStorage//
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     localStorage.setInt('yearKey', _year);
+  }
 }
 
 }

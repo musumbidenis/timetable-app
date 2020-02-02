@@ -34,7 +34,8 @@ class _SessionMondayState extends State<SessionMonday> {
     super.initState();
   }
 
-
+///Styling for texts///
+TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight: FontWeight.bold);
 
   /////Fetch the sessions that occur on monday/////
   Future<List<MondaySession>> getMondaySessions() async{
@@ -45,10 +46,8 @@ class _SessionMondayState extends State<SessionMonday> {
         'course': course,
         'year': year,      
       };
-    print(data);
     var response = await CallAPi().postData(data, 'mondaySessions');
     var jsonData = json.decode(response.body);
-    print(jsonData);
   //Create a list array to store the fetched data//
   List<MondaySession> sessions = [];
 
@@ -72,25 +71,32 @@ class _SessionMondayState extends State<SessionMonday> {
         future: getMondaySessions(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           switch (snapshot.connectionState) {
-            case ConnectionState.active:
-              return Center(
-              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
-            );
-              break;
-            case ConnectionState.waiting:
-              return Center(
-              child: Text("Loading . . .", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
-            );
             case ConnectionState.none:
               return Center(
               child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
             );
+              break;
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return Container(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      SizedBox(height: 10.0,),
+                      Text("Loading sessions",style: style,)
+                    ],
+                  ),
+                ),
+              );
+              break;
             case ConnectionState.done:
 
           //Check whether data has been fetched//
           if(snapshot.hasError){
             return Center(
-              child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
+              child: Text("Some problem occured, try again", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
             );
           }else if(snapshot.hasData){
           //Display the sessions fetched in UI//
