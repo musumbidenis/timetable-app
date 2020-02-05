@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CallAPi{
-  final String _url = 'http://sessionstable.000webhostapp.com/';
+  final String _url = 'https://sessions-timetable.herokuapp.com/';
 
 
   /////Posting data to db//////
