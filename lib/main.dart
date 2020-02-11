@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timetable/Pages/course.dart';
-
+import 'package:timetable/Pages/home.dart';
 
 void main() => runApp(MyApp());
 
@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _isLoggedIn ? Course() : Course(),
+      home: _isLoggedIn ? Home() : Course(),
     );
   }
 
