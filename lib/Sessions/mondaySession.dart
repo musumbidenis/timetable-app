@@ -96,7 +96,7 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
           //Check whether data has been fetched//
           if(snapshot.hasError){
             return Center(
-              child: Text("Some problem occured, try again", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
+              child: Text("Some problem occurred.Check your internet connection and try again!", style: TextStyle(color: Color(0xffe6020a),fontSize: 16, fontWeight: FontWeight.bold),),
             );
           }else if(snapshot.hasData){
           //Display the sessions fetched in UI//

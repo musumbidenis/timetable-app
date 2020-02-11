@@ -71,6 +71,11 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
         future: getWednesdaySessions(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Center(
+              child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
+            );
+              break;
             case ConnectionState.active:
             case ConnectionState.waiting:
               return Container(
@@ -86,17 +91,12 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
                 ),
               );
               break;
-            case ConnectionState.none:
-              return Center(
-              child: Text("No connection.Check your internet connection", style: TextStyle(color: Color(0xffe6020a),fontSize: 18, fontWeight: FontWeight.bold),),
-            );
-              break;
             case ConnectionState.done:
 
           //Check whether data has been fetched//
           if(snapshot.hasError){
             return Center(
-              child: Text("Some problem occured, try again"),
+              child: Text("Some problem occurred.Check your internet connection and try again!", style: TextStyle(color: Color(0xffe6020a),fontSize: 16, fontWeight: FontWeight.bold),),
             );
           }else if(snapshot.hasData){
           //Display the sessions fetched in UI//
