@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timetable/APIs/api.dart';
@@ -12,7 +13,6 @@ class Course extends StatefulWidget {
 class _CourseState extends State<Course> {
 
   String _course;
-  String _error;
   
   List courses = List();
 
@@ -85,13 +85,9 @@ Widget coursesDropdown(){
           onChanged: (newVal){
             setState(() {
               _course = newVal;
-              _error = null;
             });
           },
           value: _course,
-        ),
-        _error == null ? SizedBox.shrink() : Text(_error ?? "", 
-        style: style.copyWith(color: Colors.red, fontSize: 18),
         ),
         SizedBox(height: 25.0,),
 
@@ -120,8 +116,16 @@ Widget coursesDropdown(){
 //////Handles the pressed action of next button//////
 void _handleNext() async{
   if(_course == null){
-    setState(() => _error = 'Please select an option to proceed!'
-    );
+    Flushbar(
+      message: 'Please select course to proceed',
+      icon: Icon(
+        Icons.info_outline,
+        size: 28,
+        color: Colors.white,
+      ),
+      duration: Duration(seconds: 3),
+      backgroundColor: Colors.red,
+    )..show(context);
   }else{
   //Move to the next page//
     Navigator.push(context, MaterialPageRoute(

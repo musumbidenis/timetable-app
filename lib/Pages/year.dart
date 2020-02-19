@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:timetable/APIs/api.dart';
 import 'package:timetable/Pages/home.dart';
 
@@ -12,7 +13,6 @@ class Year extends StatefulWidget {
 class _YearState extends State<Year> {
 
   int _year;
-  String _error;
 
   List years = List();
 
@@ -86,13 +86,9 @@ Widget yearsDropdown(){
           onChanged: (newVal){
             setState(() {
               _year = newVal;
-              _error = null;
             });
           },
           value: _year,
-        ),
-        _error == null ? SizedBox.shrink() : Text(_error ?? "", 
-        style: style.copyWith(color: Colors.red, fontSize: 18),
         ),
         SizedBox(height: 25.0,),
 
@@ -119,8 +115,16 @@ Widget yearsDropdown(){
 }
 void _handleProceed() async{
   if(_year == null){
-    setState(() => _error = 'Please select an option to proceed!'
-    );
+    Flushbar(
+      message: 'Please select academic year to proceed',
+      icon: Icon(
+        Icons.info_outline,
+        size: 28,
+        color: Colors.white,
+      ),
+      duration: Duration(seconds: 5),
+      backgroundColor: Colors.red,
+    )..show(context);
   }else{
   //Move to the next page//
     Navigator.push(context, MaterialPageRoute(
