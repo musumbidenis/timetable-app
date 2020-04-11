@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
   void _checkIfLoggedIn() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var course = localStorage.getString('courseKey');
-    var year = localStorage.getInt('yearKey');
+    var year = localStorage.getString('yearKey');
 
     //If !=null remain logged in//
     if(course!=null && year!=null){

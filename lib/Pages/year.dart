@@ -12,7 +12,7 @@ class Year extends StatefulWidget {
 
 class _YearState extends State<Year> {
 
-  int _year;
+  String _year;
 
   List years = List();
 
@@ -47,6 +47,7 @@ void getYears() async{
   var body = json.decode(response.body);
   setState(() {
     years = body;
+    print(years);
   });
 }
 
@@ -80,12 +81,12 @@ Widget yearsDropdown(){
                   Text(item['year'].toString(), style: style,),
                 ],
               ),
-              value: item['yosId'],
+              value: item['yosId'].toString(),
             );
           }).toList(),
-          onChanged: (newVal){
+          onChanged: (value){
             setState(() {
-              _year = newVal;
+              _year = value;
             });
           },
           value: _year,
@@ -133,7 +134,7 @@ void _handleProceed() async{
 
   //Save student's course in the localStorage//
     SharedPreferences localStorage = await SharedPreferences.getInstance();
-    localStorage.setInt('yearKey', _year);
+    localStorage.setString('yearKey', _year);
   }
 }
 

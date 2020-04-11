@@ -25,7 +25,7 @@ class _SessionThursdayState extends State<SessionThursday> {
 
   //Variable used to retreive sessions for the particular student//
   String course;
-  int year;
+  String year;
   
   
   @override
@@ -41,7 +41,7 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight
   Future<List<ThursdaySession>> getThursdaySessions() async{
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     course = localStorage.getString('courseKey');
-    year= localStorage.getInt('yearKey');
+    year= localStorage.getString('yearKey');
       var data = {
         'course': course,
         'year': year,      
