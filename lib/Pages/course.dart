@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timetable/models/api.dart';
 import 'package:timetable/Pages/year.dart';
@@ -26,6 +27,7 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
 
   @override
   Widget build(BuildContext context) {
+  SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Builder(builder: (context){
