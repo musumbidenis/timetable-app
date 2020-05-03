@@ -23,6 +23,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     getSessions();
   }
 
+  /*Set current index */
   _handleTabSelection() {
     setState(() {
       _currentIndex = tabController.index;
@@ -171,9 +172,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   );
-                } else if (snapshot.hasData == null) {
-                  return Text("data");
-                }else{
+                } else if (snapshot.hasData) {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -255,7 +254,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
 
-  /*Fetch the sessions that occur on monday*/
+  /*Fetch the sessions that occur on current tab index*/
   Future<List<Session>> getSessions() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     course = localStorage.getString('courseKey');
@@ -284,7 +283,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
 
     /*Return the sessions*/
+    if(sessions.isEmpty){
+    }
     return sessions;
+
+
     
   }
 

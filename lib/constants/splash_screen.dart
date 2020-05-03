@@ -11,7 +11,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   startTime() async {
-    var _duration = new Duration(seconds: 2);
+    var _duration = new Duration(seconds: 4);
     return new Timer(_duration, navigate);
   }
 
@@ -35,6 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         body: Center(
           child: Container(
             height: 300,
@@ -44,17 +45,18 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
         bottomSheet: Container(
           height: 50,
+          color: Colors.white,
           width: double.infinity,
           child: Center(
             child: RichText(
               text: TextSpan(
                   text: "Designed & Developed by | ",
-                  style: TextStyle(color: Colors.grey[600], fontSize: 15),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
                   children: <TextSpan>[
                     TextSpan(
                         text: "musumbidenis",
                         style:
-                            TextStyle(color: Colors.green, fontSize: 15),
+                            TextStyle(color: Colors.green, fontSize: 12),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
                             if (await canLaunch("http://musumbidenis.co.ke")) {
