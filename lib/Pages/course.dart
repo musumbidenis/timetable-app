@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timetable/APIs/api.dart';
+import 'package:timetable/models/api.dart';
 import 'package:timetable/Pages/year.dart';
 
 class Course extends StatefulWidget {
@@ -11,19 +11,18 @@ class Course extends StatefulWidget {
 }
 
 class _CourseState extends State<Course> {
-
   String _course;
-  
   List courses = List();
 
-///Styling for texts///
+/*Text Styling */
 TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
+
+
   @override
   void initState() {
     super.initState();
-    this.getCourses();
+    getCourses();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,7 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
   }
 
 
-  ////////////getCourses API////////////
+/*getCourses API*/
 void getCourses() async{
   var response = await CallAPi().getData('getCourses');
   var body = json.decode(response.body);
@@ -52,7 +51,7 @@ void getCourses() async{
   });
 }
 
-////////////Dropdown button for choosing courses/////////////
+/*Dropdown button for choosing courses*/
 Widget coursesDropdown(){
  return Container(
     padding: EdgeInsets.only(left: 20.0, right: 20.0),
@@ -60,7 +59,7 @@ Widget coursesDropdown(){
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text("Which course are you undertaking?", style: style.copyWith(
-          color: Color(0xff01A0C7),
+          color: Colors.green,
           fontSize: 25,
           fontWeight: FontWeight.bold,
         )),
@@ -70,7 +69,7 @@ Widget coursesDropdown(){
           iconSize: 50,
           underline: Container(
             height: 3.0,
-            color:  Color(0xff01A0C7),
+            color:  Colors.green,
           ),
           elevation: 10,
           hint: Text("Select course undertaking", style: style,),
@@ -91,12 +90,12 @@ Widget coursesDropdown(){
         ),
         SizedBox(height: 25.0,),
 
-        /////Next button/////
+        /*Next Button */
         Padding(
           padding: const EdgeInsets.only(top: 80.0),
           child: Material(
             borderRadius: BorderRadius.circular(30.0),
-            color: Color(0xff01A0C7),
+            color: Colors.green,
             child: MaterialButton(
               minWidth: MediaQuery.of(context).size.width,
               padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -113,26 +112,21 @@ Widget coursesDropdown(){
   );
 }
 
-//////Handles the pressed action of next button//////
+/*Handles the pressed action of next button*/
 void _handleNext() async{
   if(_course == null){
     Flushbar(
       message: 'Please select course to proceed',
-      icon: Icon(
-        Icons.info_outline,
-        size: 28,
-        color: Colors.white,
-      ),
       duration: Duration(seconds: 3),
       backgroundColor: Colors.red,
     )..show(context);
   }else{
-  //Move to the next page//
+  /*Move to the next page*/
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => Year()
     ),);
 
-  //Save student's course in the localStorage//
+  /*Save student's course in the localStorage*/
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     localStorage.setString('courseKey', _course);
   }}

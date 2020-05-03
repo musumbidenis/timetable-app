@@ -2,10 +2,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CallAPi{
-  final String _url = 'http://timetable-app.musumbidenis.co.ke/api/';
+  final String _url = 'http://10.0.2.2:8000/api/';
 
 
-  /////Posting data to db//////
+  /*Posting data to db*/
   postData(data, apiUrl) async{
     var fullUrl = _url + apiUrl;
     return await http.post(
@@ -15,7 +15,7 @@ class CallAPi{
     );
   }
 
-  /////Fetching data from db/////
+  /*Fetching data from db*/
   getData(apiUrl) async{
     var fullUrl = _url + apiUrl;
     return await http.get(

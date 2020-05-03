@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flushbar/flushbar.dart';
-import 'package:timetable/APIs/api.dart';
+import 'package:timetable/models/api.dart';
 import 'package:timetable/Pages/home.dart';
 
 class Year extends StatefulWidget {
@@ -11,17 +11,16 @@ class Year extends StatefulWidget {
 }
 
 class _YearState extends State<Year> {
-
   String _year;
-
   List years = List();
 
-///Styling for texts///
+/*Text Styling */
 TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
+
   @override
   void initState() {
     super.initState();
-    this.getYears();
+    getYears();
   }
 
 
@@ -41,17 +40,16 @@ TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0);
   }
 
 
-////////////getYears API////////////
+/*getYears API */
 void getYears() async{
   var response = await CallAPi().getData('getYears');
   var body = json.decode(response.body);
   setState(() {
     years = body;
-    print(years);
   });
 }
 
-////////////Dropdown button for choosing courses/////////////
+/*Dropdown button for choosing courses*/
 Widget yearsDropdown(){
  return Container(
     padding: EdgeInsets.only(left: 20.0, right: 20.0),
@@ -59,7 +57,7 @@ Widget yearsDropdown(){
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text("What's your current academic year of study?", style: style.copyWith(
-          color: Color(0xff01A0C7),
+          color: Colors.green,
           fontSize: 25,
           fontWeight: FontWeight.bold,
         )),
@@ -69,7 +67,7 @@ Widget yearsDropdown(){
           iconSize: 50,
           underline: Container(
             height: 3.0,
-            color:  Color(0xff01A0C7),
+            color:  Colors.green,
           ),
           elevation: 10,
           hint: Text("Select your academic year", style: style,),
@@ -93,12 +91,12 @@ Widget yearsDropdown(){
         ),
         SizedBox(height: 25.0,),
 
-        /////Next button/////
+        /*Next Button */
         Padding(
           padding: const EdgeInsets.only(top: 80.0),
           child: Material(
             borderRadius: BorderRadius.circular(30.0),
-            color: Color(0xff01A0C7),
+            color: Colors.green,
             child: MaterialButton(
               minWidth: MediaQuery.of(context).size.width,
               padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -114,25 +112,22 @@ Widget yearsDropdown(){
     ),
   );
 }
+
+/*Handles the pressed action of next button*/
 void _handleProceed() async{
   if(_year == null){
     Flushbar(
       message: 'Please select academic year to proceed',
-      icon: Icon(
-        Icons.info_outline,
-        size: 28,
-        color: Colors.white,
-      ),
       duration: Duration(seconds: 5),
       backgroundColor: Colors.red,
     )..show(context);
   }else{
-  //Move to the next page//
+  /*Move to the next page*/
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => Home(),
     ),);
 
-  //Save student's course in the localStorage//
+  /*Save student's year of study in the localStorage*/
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     localStorage.setString('yearKey', _year);
   }

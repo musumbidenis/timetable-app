@@ -1,13 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:platform_alert_dialog/platform_alert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timetable/models/api.dart';
 import 'package:timetable/Pages/course.dart';
-import 'package:timetable/Sessions/fridaySession.dart';
-import 'package:timetable/Sessions/mondaySession.dart';
-import 'package:timetable/Sessions/thursdaySession.dart';
-import 'package:timetable/Sessions/tuesdaySession.dart';
-import 'package:timetable/Sessions/wednesdaySession.dart';
-import 'package:timetable/background.dart';
-
+import 'package:timetable/models/session.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,191 +12,371 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  int _currentIndex = 0;
   TabController tabController;
 
   @override
   void initState() {
-    tabController = TabController(length: 5, vsync: this);
     super.initState();
-    getTabBarPages();
+    tabController = TabController(vsync: this, length: 5);
+    tabController.addListener(_handleTabSelection);
+    getSessions();
+  }
+
+  _handleTabSelection() {
+    setState(() {
+      _currentIndex = tabController.index;
+    });
   }
 
   @override
-  void dispose(){
+  void dispose() {
     tabController.dispose();
     super.dispose();
   }
 
-///Styling for texts///
-TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight: FontWeight.bold);
+/*Variables used to retreive sessions for the particular student*/
+  String course;
+  String year;
+
+/*Styling for texts*/
+  TextStyle style = TextStyle(fontFamily: "Montserrat", fontSize: 20.0, fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          //Background//
-          Background(screenHeight: MediaQuery.of(context).size.height,),
-
-          //Headings for the hompage//
-          Padding(
-            padding: const EdgeInsets.only(top: 60.0,left: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Timetable",style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold, color: Color(0x99FFFFFF)),),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 18.0),
-                        child: InkWell(
-                          child: Icon(Icons.exit_to_app, size: 30, color: Colors.white,),
-                          onTap: () async {
-                            //Remove the user details stored in localStorage then ...//
+      appBar: AppBar(
+        title: Text(
+          'Timetable',
+          style: style.copyWith(fontSize:27),
+        ),
+      leading: GestureDetector(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+          child: Icon(
+          Icons.keyboard_arrow_left,
+          size: 40.0,
+        ),
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(right: 20.0),
+          child: GestureDetector(
+            onTap: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return PlatformAlertDialog(
+                      title: Text(''),
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Text("Are you sure, you want to exit app?", style: style,)
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        PlatformDialogAction(
+                          child: Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        PlatformDialogAction(
+                          child: Text('Ok'),
+                          actionType: ActionType.Preferred,
+                          onPressed: () async {
+                            /*Remove the student details from localstorage */
                             SharedPreferences localStorage = await SharedPreferences.getInstance();
                             localStorage.remove('courseKey');
                             localStorage.remove('yearKey');
 
-                            //SignOut user ... redirect to the first page(course)//
+                            /*Navigate to the selecting course page */
                             Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => Course(),
-                            ),);
-                          },  
+                              builder: (context) => Course()),);
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                  Text("Sessions", style: TextStyle(fontSize: 35.0,fontWeight: FontWeight.bold, color: Color(0XFFFFFFFF)),),
-                ],
+                      ],
+                    );
+                  },
+                );
+              },
+            child: Icon(
+              Icons.exit_to_app,
+              size: 30.0,
             ),
-          ),
-
-          //TabBar appears here//
-          Padding(
-            padding: const EdgeInsets.only(top: 150.0),
-            child: Container(
-              height: 75,
-              child: getTabBar()
-            ),
-          ),
-
-          //TabBar pages appear here//
-          Padding(
-            padding: const EdgeInsets.only(top: 210.0),
-            child: Container(
-              child: getTabBarPages(),
-            ),
-          ),
-        ],), 
+          )
+        ),
+      ],
+      bottom: getTabBar(),
+      ),
+      body: Container(
+        child: Stack(children: <Widget>[
+          getTabBarPages(),
+        ]),
+      ),
     );
   }
-  Future onWillPop() async {
-    return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit an App'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
-          ),
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Yes'),
-          ),
-        ],
+
+  Widget session() {
+    return Container(
+        child: FutureBuilder(
+          future: getSessions(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal:10.0),
+                  child: Center(
+                    child: Text(
+                      "No connection.Check your internet connection",
+                      style: TextStyle(
+                      color: Color(0xffe6020a),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                );
+              break;
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Container(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircularProgressIndicator(),
+                        SizedBox(height: 10.0,),
+                        Text(
+                          "Loading sessions",
+                          style: style,
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              break;
+              case ConnectionState.done:
+                if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal:10.0),
+                    child: Center(
+                      child: Text(
+                        "Some problem occurred.Check your internet connection and try again!",
+                        style: TextStyle(
+                        color: Color(0xffe6020a),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                } else if (snapshot.hasData == null) {
+                  return Text("data");
+                }else{
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height* 0.25,
+                    child: Card(
+                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      elevation: 18.0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:BorderRadius.all(Radius.circular(8)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Text(
+                              snapshot.data[index].unitCode,
+                              style: TextStyle(
+                              color: Color(0xffe6020a),
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              snapshot.data[index].unitTitle,
+                              style: TextStyle(
+                              color: Colors.black54, fontSize: 18),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              mainAxisAlignment:  MainAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  snapshot.data[index].sessionStart,
+                                  style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Text(
+                                  "--",
+                                  style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Text(
+                                  snapshot.data[index].sessionStop,
+                                  style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              );
+            }
+          }
+          return Container();
+        },
       ),
-    )) ?? false;
+    );
   }
 
-////////////TabBar widget/////////////
- Widget getTabBar() {
-  return TabBar(
-    isScrollable: true,
-    controller: tabController,
-    unselectedLabelColor: Colors.white,
-    labelStyle: style,
-    indicatorSize: TabBarIndicatorSize.label,
-    indicator: BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(10)),
-      color: Color(0xffe6020a),
-    ),
 
-    /////Tabs for the days/////
-    tabs: [
-    //Monday//
-      Tab(
-        child: Container(
-          width: 120,
-          child: Align(
-           alignment: Alignment.center,
-              child: Text("Monday", style: TextStyle(fontSize: 20),),
-          ),
-        ),
-      ),
+  /*Fetch the sessions that occur on monday*/
+  Future<List<Session>> getSessions() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    course = localStorage.getString('courseKey');
+    year = localStorage.getString('yearKey');
+    var data = {
+      'course': course,
+      'year': year,
+      'dayId': _currentIndex + 1,
+    };
+    var response = await CallAPi().postData(data, 'sessions');
+    var jsonData = json.decode(response.body);
 
-      //Tuesday//
-      Tab(
-        child: Container(
-          width: 120,
-        child: Align(
-          alignment: Alignment.center,
-          child: Text("Tuesday", style: TextStyle(fontSize: 20),),
-        ),
-       ),
-      ),
+    /*Create a list array to store the fetched data*/
+    List<Session> sessions = [];
 
-      //Wednesday//
-      Tab(
-        child: Container(
-          width: 130,
-        child: Align(
-          alignment: Alignment.center,
-          child: Text("Wednesday", style: TextStyle(fontSize: 20),),
-        ),
-       ),
-      ),
+    /*Loop through the jsonData and add the items to the list array created*/
+    for (var s in jsonData) {
+      Session session = Session(
+        s["unitCode"],
+        s["unitTitle"],
+        s["sessionStart"],
+        s["sessionStop"],
+      );
 
-      //Thursday//
-      Tab(
-        child: Container(
-          width: 120,
-        child: Align(
-          alignment: Alignment.center,
-          child: Text("Thursday", style: TextStyle(fontSize: 20),),
-        ),
-       ),
-      ),
+      sessions.add(session);
+    }
 
-      //Friday//
-      Tab(
-        child: Container(
-          width: 120,
-        child: Align(
-          alignment: Alignment.center,
-          child: Text("Friday", style: TextStyle(fontSize: 20),),
-        ),
-       ),
-      ),
-    ]);
+    /*Return the sessions*/
+    return sessions;
+    
   }
 
 
-/////////////Pages to display for each tab///////////////
-Widget getTabBarPages() {
-  return Padding(
-    padding: const EdgeInsets.only(top: 40),
-    child: TabBarView(
-      controller: tabController,
-      children: <Widget>[
-        SessionMonday(),
-        SessionTuesday(),
-        SessionWednesday(),
-        SessionThursday(),
-        SessionFriday(),
-      ]),
-  );
- }
+
+  /*Tab Bar*/
+  Widget getTabBar() {
+    return TabBar(
+        isScrollable: true,
+        controller: tabController,
+        unselectedLabelColor: Colors.white,
+        labelStyle: style,
+        indicatorSize: TabBarIndicatorSize.label,
+        tabs: [
+          Tab(
+            child: Container(
+              width: 120,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Monday",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+          ),
+          Tab(
+            child: Container(
+              width: 120,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Tuesday",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+          ),
+          Tab(
+            child: Container(
+              width: 130,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Wednesday",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+          ),
+          Tab(
+            child: Container(
+              width: 120,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Thursday",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+          ),
+          Tab(
+            child: Container(
+              width: 120,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Friday",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+          ),
+        ]);
+  }
+
+
+
+
+/*Tab Bar Pages*/
+  Widget getTabBarPages() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal:10),
+      child: TabBarView(controller: tabController, children: <Widget>[
+          session(),
+          session(),
+          session(),
+          session(),
+          session(),
+      ],),
+    );
+    
+  }
 }
